@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import * as Contacts from "expo-contacts";
 
-const useGetContacts = async (setContacts) => {
-  const { data } = await Contacts.getContactsAsync();
-  if (data.length > 0) {
-    setContacts(data)
-  }
-};
+import { createAppContainer } from "react-navigation";
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 
-export default function App() {
-  const [contacts, setContacts] = useState([]);
+import Accounts from "./src/screens/Accounts";
+import { SCREENS } from './src/constants';
 
-  useEffect(() => {
-    useGetContacts(setContacts);
-  })
+
+function App() {
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
     </View>
   );
 }
+
+const Navigator = createMaterialBottomTabNavigator(
+  {
+    [SCREENS.ACCOUNTS]: { screen: Accounts },
+    Home: { screen: App },
+  },
+  {
+    initialRouteName: `${SCREENS.ACCOUNTS}`,
+    activeColor: "#f0edf6",
+    inactiveColor: "#3e2465",
+    barStyle: { backgroundColor: "#694fad" }
+  }
+);
+
+export default createAppContainer(Navigator);
 
 const styles = StyleSheet.create({
   container: {

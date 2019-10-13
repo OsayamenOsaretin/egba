@@ -51,7 +51,7 @@ const ContactList = () => {
       <FlatList
         data={contacts}
         keyExtractor={(item, index) => `${index}`}
-        keyboardShouldPersistTaps={true}
+        keyboardShouldPersistTaps="always"
         renderItem={({ item }) => (
           <ContactListItem contact={item} navigate={navigate} />
         )}

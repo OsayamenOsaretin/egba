@@ -1,41 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { createAppContainer } from "react-navigation";
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 
-import Accounts from "./src/screens/Accounts";
+import Home from "./src/screens/Home";
+import Auth from './src/screens/Auth';
 import { SCREENS } from './src/constants';
 
 
-function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
-}
-
-const Navigator = createMaterialBottomTabNavigator(
+const Navigator = createSwitchNavigator(
   {
-    [SCREENS.ACCOUNTS]: { screen: Accounts },
-    Home: { screen: App },
+    [SCREENS.AUTH]: { screen: Auth },
+    [SCREENS.HOME]: { screen: Home },
   },
   {
-    initialRouteName: `${SCREENS.ACCOUNTS}`,
-    activeColor: "#f0edf6",
-    inactiveColor: "#3e2465",
-    barStyle: { backgroundColor: "#694fad" }
+    initialRouteName: `${SCREENS.AUTH}`,
   }
 );
 
 export default createAppContainer(Navigator);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});

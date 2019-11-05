@@ -18,11 +18,11 @@ function App() {
 
 const HomeNavigator = createMaterialBottomTabNavigator(
   {
-    [SCREENS.ACCOUNTS]: { screen: Accounts },
+    // [SCREENS.ACCOUNTS]: { screen: Accounts },
     Home: { screen: App },
   },
   {
-    initialRouteName: `${SCREENS.ACCOUNTS}`,
+    // initialRouteName: `${SCREENS.ACCOUNTS}`,
     activeColor: "#f0edf6",
     inactiveColor: "#3e2465",
     barStyle: { backgroundColor: "#694fad" }

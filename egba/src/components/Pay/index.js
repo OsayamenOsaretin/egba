@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { KeyboardAvoidingView, View } from "react-native";
 import {
   Avatar,
@@ -12,6 +12,8 @@ import { TextInputMask } from "react-native-masked-text";
 import { Formik } from "formik";
 
 import { useNavigator, useNavigationParam } from "react-navigation-hooks";
+import CallApi from "api/callApi";
+
 import styles from "./styles";
 
 const useCheckRegistered = account => {
@@ -23,13 +25,51 @@ const Pay = () => {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <AccountInfo account={account} />
-      <PaymentForm account={account} />
     </KeyboardAvoidingView>
   );
 };
 
+const useFetchAccount = account => {
+  const { phoneNumbers } = account;
+  const [phoneNumber] = phoneNumbers;
+  const [userAccount, setUserAccount] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const params = {
+      url: "",
+      variables: {
+        user: phoneNumber
+      }
+    };
+
+    const callback = (userAccount, error) => {
+      if (error) {
+        setError(error);
+      }
+      setUserAccount(userAccount);
+    };
+
+    CallApi(params, callback);
+  }, []);
+
+  return [userAccount, error];
+};
+
 const PaymentForm = ({ account }) => {
   const [registered, checking] = useCheckRegistered(account);
+  const [userAccount, fetchAccountError] = useFetchAccount(account);
+
+  const handlePayment = (receiver, amount) => {
+    // get the receiver account details
+    // get the sender bank code
+    // if (userAccount) {
+    // const accountNumber = '';
+    // const senderBankCode = '';
+    // const ussd = `*${senderBankCode}*${accountNumber}#`
+    // // trigger ussd code
+    // }
+  };
 
   let Form = UnregisteredUserForm;
 
@@ -62,7 +102,12 @@ const AccountInfo = ({ account }) => {
 };
 
 const PayButton = ({ handleSubmit }) => (
-  <Button mode="contained" style={styles.payButton} dark={true}>
+  <Button
+    onPress={handleSubmit}
+    mode="contained"
+    style={styles.payButton}
+    dark={true}
+  >
     Send
   </Button>
 );

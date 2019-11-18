@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { KeyboardAvoidingView, View } from "react-native";
 import {
   Avatar,
@@ -14,9 +14,41 @@ import { Formik } from "formik";
 import { useNavigator, useNavigationParam } from "react-navigation-hooks";
 import styles from "./styles";
 
-const useCheckRegistered = account => {
-  return [true, false];
+const GET_USER_ACCOUNT_ENDPOINT = 'http://localhost:8000/api';
+
+const useGetAccount = account => {
+  // fetch the account using the fetch api
+  const [loading, setLoading] = useState(true);
+  const [userAccount, setUserAccount] = useState(null);
+
+  const fetchUserAccountData = async (setAccount) => {
+    try {
+      const data = await fetch(GET_USER_ACCOUNT_ENDPOINT, {
+        method: "post",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+
+        //make sure to serialize your JSON body
+        body: JSON.stringify({
+          phone: account.phoneNumbers[0]
+        })
+      });
+      console.log(data, "the value of data is given");
+      setAccount(data);
+    } catch (error) {
+      console.log(error, "the fetch error");
+    }
+  }
+
+  useEffect(() => {
+    fetchUserAccountData(setUserAccount);
+    setLoading(false);
+  }, [account]);
+  return [userAccount, loading];
 };
+
 
 const Pay = () => {
   const account = useNavigationParam("account");
@@ -29,15 +61,15 @@ const Pay = () => {
 };
 
 const PaymentForm = ({ account }) => {
-  const [registered, checking] = useCheckRegistered(account);
+  const [accountDetails, loading] = useGetAccount(account);
 
   let Form = UnregisteredUserForm;
 
-  if (checking) {
+  if (loading) {
     return <ActivityIndicator />;
   }
 
-  if (registered) {
+  if (accountDetails) {
     Form = RegisteredUserForm;
   }
 

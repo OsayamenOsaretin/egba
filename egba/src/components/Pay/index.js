@@ -1,57 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { KeyboardAvoidingView, View } from "react-native";
+import React, { useState, useEffect, useContext } from 'react';
+import { KeyboardAvoidingView, View } from 'react-native';
 import {
   Avatar,
   ActivityIndicator,
   Button,
   Text,
-  TextInput
-} from "react-native-paper";
+  TextInput,
+} from 'react-native-paper';
 // import TestInputMask from "react-native-text-input-mask";
-import { TextInputMask } from "react-native-masked-text";
-import { Formik } from "formik";
+import { TextInputMask } from 'react-native-masked-text';
+import { Formik } from 'formik';
 
-import { useNavigator, useNavigationParam } from "react-navigation-hooks";
-import styles from "./styles";
+import { useNavigator, useNavigationParam } from 'react-navigation-hooks';
 
-const GET_USER_ACCOUNT_ENDPOINT = 'http://localhost:8000/api';
+import UserContext from 'shared/contexts/user';
+import config from 'config';
+
+import styles from './styles';
+
+const { BASE_URL } = config;
+
+const GET_USER_ACCOUNT_ENDPOINT = `${BASE_URL}/client/bank-details/`;
 
 const useGetAccount = account => {
   // fetch the account using the fetch api
   const [loading, setLoading] = useState(true);
   const [userAccount, setUserAccount] = useState(null);
 
-  const fetchUserAccountData = async (setAccount) => {
-    try {
-      const data = await fetch(GET_USER_ACCOUNT_ENDPOINT, {
-        method: "post",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
+  // const { phoneNumbers: [ { number } ] } = account;
+  const number = '2347061565279';
+  // console.log(BASE_URL, 'THE BASE URL><><>')
 
-        //make sure to serialize your JSON body
-        body: JSON.stringify({
-          phone: account.phoneNumbers[0]
-        })
+  const fetchUserAccountData = async () => {
+    try {
+      const data = await fetch(`${GET_USER_ACCOUNT_ENDPOINT}${number}`, {
+        method: 'get',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
       });
-      console.log(data, "the value of data is given");
-      setAccount(data);
+      const response = await data.json();
+      console.log(JSON.stringify(response), 'user bank info');
+      setUserAccount(response);
     } catch (error) {
-      console.log(error, "the fetch error");
+      console.log(error, 'the fetch error');
     }
-  }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    fetchUserAccountData(setUserAccount);
-    setLoading(false);
+    fetchUserAccountData();
   }, [account]);
   return [userAccount, loading];
 };
 
-
 const Pay = () => {
-  const account = useNavigationParam("account");
+  const account = useNavigationParam('account');
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <AccountInfo account={account} />
@@ -61,26 +66,54 @@ const Pay = () => {
 };
 
 const PaymentForm = ({ account }) => {
-  const [accountDetails, loading] = useGetAccount(account);
+  const currentUserContext = useContext(UserContext);
+  const { bank: currentUserBank } = currentUserContext;
 
-  let Form = UnregisteredUserForm;
+  const [accountDetails, loadingAccountDetails] = useGetAccount(account);
 
-  if (loading) {
+  if (loadingAccountDetails) {
     return <ActivityIndicator />;
   }
 
+  let Form = UnregisteredUserForm;
+  let handleSubmit = values => {
+    // handle submitting request for to send money
+
+    const { accountNumber } = values;
+    // dummy pay account number
+  };
+
+  let bankAccountDetails;
+
   if (accountDetails) {
     Form = RegisteredUserForm;
+    handleSubmit = values => {
+      const [{ account_number: accountNumber }] = accountDetails;
+      console.log('the user account number', accountNumber);
+      // pay account number
+    };
+    const [
+      {
+        account_number: accountNumber,
+        label,
+        code: bankCode,
+      },
+    ] = accountDetails;
+    bankAccountDetails = { accountNumber, label, bankCode };
   }
 
-  return <Formik>{props => <Form {...props} />}</Formik>;
+  return (
+    <Formik onSubmit={handleSubmit}>
+      {props => <Form {...props} {...bankAccountDetails} />}
+    </Formik>
+  );
 };
 
 const AccountInfo = ({ account }) => {
   const name = account.name;
   const hasImage = account.imageAvailable;
 
-  const avatarType = hasImage ? "Image" : "Icon";
+  const avatarType = hasImage ? 'Image' : 'Icon';
   const AccountAvatar = Avatar[avatarType];
 
   return (
@@ -94,7 +127,12 @@ const AccountInfo = ({ account }) => {
 };
 
 const PayButton = ({ handleSubmit }) => (
-  <Button mode="contained" style={styles.payButton} dark={true}>
+  <Button
+    mode="contained"
+    style={styles.payButton}
+    dark={true}
+    onPress={handleSubmit}
+  >
     Send
   </Button>
 );
@@ -102,7 +140,7 @@ const PayButton = ({ handleSubmit }) => (
 const AmountTextInput = ({ values, handleChange }) => (
   <TextInput
     value={values.amount}
-    onChangeText={handleChange("amount")}
+    onChangeText={handleChange('amount')}
     label="How much?"
     render={props => (
       <TextInputMask
@@ -110,9 +148,9 @@ const AmountTextInput = ({ values, handleChange }) => (
         type="money"
         options={{
           precision: 0,
-          delimiter: ",",
-          unit: "#",
-          suffixUnit: ""
+          delimiter: ',',
+          unit: '#',
+          suffixUnit: '',
         }}
       />
     )}
@@ -131,10 +169,10 @@ const RegisteredUserForm = props => (
 const UnregisteredUserForm = ({ handleChange, handleBlur, values }) => (
   <View style={styles.formContainer}>
     <View style={styles.inputContainer}>
-      <TextInput onChangeText={handleChange("bank")} value={values.amount} />
+      <TextInput onChangeText={handleChange('bank')} value={values.amount} />
     </View>
     <View style={styles.inputContainer}>
-      <TextInput onChangeText={handleChange("account")} value={values.amount} />
+      <TextInput onChangeText={handleChange('account')} value={values.amount} />
     </View>
     <View style={styles.inputContainer}>
       <AmountTextInput {...props} />

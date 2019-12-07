@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { KeyboardAvoidingView, View } from 'react-native';
+import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import {
   Avatar,
   ActivityIndicator,
@@ -27,8 +27,8 @@ const useGetAccount = account => {
   const [loading, setLoading] = useState(true);
   const [userAccount, setUserAccount] = useState(null);
 
-  // const { phoneNumbers: [ { number } ] } = account;
-  const number = '2347061565279';
+  const { phoneNumbers: [ { number } ] } = account;
+  // const number = '2347061565279';
   // console.log(BASE_URL, 'THE BASE URL><><>')
 
   const fetchUserAccountData = async () => {
@@ -51,7 +51,8 @@ const useGetAccount = account => {
 
   useEffect(() => {
     fetchUserAccountData();
-  }, [account]);
+  }, [number]);
+
   return [userAccount, loading];
 };
 
@@ -59,15 +60,17 @@ const Pay = () => {
   const account = useNavigationParam('account');
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <AccountInfo account={account} />
-      <PaymentForm account={account} />
+      <ScrollView>
+        <AccountInfo account={account} />
+        <PaymentForm account={account} />
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
 
 const PaymentForm = ({ account }) => {
-  const currentUserContext = useContext(UserContext);
-  const { bank: currentUserBank } = currentUserContext;
+  // const currentUserContext = useContext(UserContext);
+  // const { bank: currentUserBank } = currentUserContext;
 
   const [accountDetails, loadingAccountDetails] = useGetAccount(account);
 
@@ -75,37 +78,29 @@ const PaymentForm = ({ account }) => {
     return <ActivityIndicator />;
   }
 
-  let Form = UnregisteredUserForm;
-  let handleSubmit = values => {
+  const handleSubmit = values => {
     // handle submitting request for to send money
 
-    const { accountNumber } = values;
+    const { accountNumber, label, amount, bank } = values;
+    console.log('the values', values);
     // dummy pay account number
   };
 
-  let bankAccountDetails;
+  let initialState = {
+    bank: '',
+    accountNumber: '',
+    amount: '',
+  };
 
-  if (accountDetails) {
-    Form = RegisteredUserForm;
-    handleSubmit = values => {
-      const [{ account_number: accountNumber }] = accountDetails;
-      console.log('the user account number', accountNumber);
-      // pay account number
-    };
-    const [
-      {
-        account_number: accountNumber,
-        label,
-        code: bankCode,
-      },
-    ] = accountDetails;
-    bankAccountDetails = { accountNumber, label, bankCode };
+  if (accountDetails.length > 0) {
+    const [{ account_number: accountNumber, label }] = accountDetails;
+    initialState = { bank: label, accountNumber, label };
   }
 
   return (
-    <Formik onSubmit={handleSubmit}>
-      {props => <Form {...props} {...bankAccountDetails} />}
-    </Formik>
+      <Formik onSubmit={handleSubmit} initialValues={initialState}>
+        {props => <Form {...props} />}
+      </Formik>
   );
 };
 
@@ -157,25 +152,19 @@ const AmountTextInput = ({ values, handleChange }) => (
   />
 );
 
-const RegisteredUserForm = props => (
+const Form = ({ handleChange, values }) => (
   <View style={styles.formContainer}>
     <View style={styles.inputContainer}>
-      <AmountTextInput {...props} />
-    </View>
-    <PayButton {...props} />
-  </View>
-);
-
-const UnregisteredUserForm = ({ handleChange, handleBlur, values }) => (
-  <View style={styles.formContainer}>
-    <View style={styles.inputContainer}>
-      <TextInput onChangeText={handleChange('bank')} value={values.amount} />
+      <TextInput onChangeText={handleChange('bank')} value={values.bank} />
     </View>
     <View style={styles.inputContainer}>
-      <TextInput onChangeText={handleChange('account')} value={values.amount} />
+      <TextInput
+        onChangeText={handleChange('accountNumber')}
+        value={values.accountNumber}
+      />
     </View>
     <View style={styles.inputContainer}>
-      <AmountTextInput {...props} />
+      <AmountTextInput values={values} handleChange={handleChange} />
     </View>
     <PayButton />
   </View>

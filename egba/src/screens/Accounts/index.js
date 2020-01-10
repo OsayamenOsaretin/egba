@@ -1,9 +1,9 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation-stack";
 
-import { SCREENS } from '../../../src/constants';
-import Contacts from "../../../src/components/Contacts";
-import Pay from "../../../src/components/Pay";
+import { SCREENS } from 'constants';
+import Contacts from 'screens/Contacts';
+import Pay from 'screens/Pay';
 
 const AccountStack = createStackNavigator({
   [SCREENS.CONTACTS]: { screen: Contacts },

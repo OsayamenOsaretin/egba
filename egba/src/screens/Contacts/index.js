@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList, View } from "react-native";
 
-import { List, Searchbar } from "react-native-paper";
+import { Searchbar, withTheme } from "react-native-paper";
 import { useNavigation } from "react-navigation-hooks";
 
 import * as Contacts from "expo-contacts";
 import { SCREENS } from "../../../src/constants";
 import SignoutButton from 'components/SignoutButton';
+import ContactListItem from 'components/ContactListItem';
+
+import styles from './styles';
 
 
 const getContacts = async (setContacts, search) => {
@@ -23,20 +26,14 @@ const getContacts = async (setContacts, search) => {
   }
 };
 
-const ContactListItem = ({ contact, navigate }) => (
-  <TouchableOpacity onPress={() => navigate(SCREENS.PAY, { account: contact })}>
-    <List.Item
-      title={contact.name}
-      left={() => <List.Icon icon="account-circle" />}
-    />
-  </TouchableOpacity>
-);
 
-const ContactList = () => {
+const ContactList = ({ theme }) => {
   const [contacts, setContacts] = useState([]);
   const [contactSearch, setContactSearch] = useState("");
   const { navigate } = useNavigation();
-  console.log('navigate', navigate)
+  const themeStyles = styles(theme);
+
+  const handlePress = () => navigate(SCREENS.PAY, { account: contact });
 
   useEffect(() => {
     getContacts(setContacts, contactSearch);
@@ -44,21 +41,25 @@ const ContactList = () => {
   }, [contactSearch]);
 
   return (
-    <React.Fragment>
+    <View>
       <Searchbar
         onChangeText={setContactSearch}
         value={contactSearch}
         placeholder="Search contacts"
+        style={themeStyles.searchBar}
       />
       <FlatList
         data={contacts}
         keyExtractor={(_, index) => `${index}`}
         keyboardShouldPersistTaps="always"
         renderItem={({ item }) => (
-          <ContactListItem contact={item} navigate={navigate} />
+          <ContactListItem
+            contact={item}
+            handlePress={handlePress}
+          />
         )}
       />
-    </React.Fragment>
+    </View>
   );
 };
 
@@ -67,7 +68,7 @@ ContactList.navigationOptions = {
   headerRight: <SignoutButton />,
 };
 
-export default ContactList;
+export default withTheme(ContactList);
 
 // account Object {
 // "addresses": Array [

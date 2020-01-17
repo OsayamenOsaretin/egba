@@ -12,9 +12,9 @@ import { SCREENS } from 'constants';
 import UserDetailsForm from 'components/UserDetailsForm';
 
 const ConfirmDetails = () => {
-  // const phoneNumber = useNavigationParam('phoneNumber');
+  const phoneNumber = useNavigationParam('phoneNumber');
 
-  const phoneNumber = '2347061565279';
+  // const phoneNumber = '2347061565279';
   
   const [userAccount, userAccountLoading] = useGetAccountDetails(phoneNumber);
   const { registerUser } = useRegister();

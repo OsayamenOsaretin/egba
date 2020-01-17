@@ -6,6 +6,8 @@ import { useNavigation } from "react-navigation-hooks";
 
 import * as Contacts from "expo-contacts";
 import { SCREENS } from "../../../src/constants";
+import SignoutButton from 'components/SignoutButton';
+
 
 const getContacts = async (setContacts, search) => {
   const query = {
@@ -50,7 +52,7 @@ const ContactList = () => {
       />
       <FlatList
         data={contacts}
-        keyExtractor={(item, index) => `${index}`}
+        keyExtractor={(_, index) => `${index}`}
         keyboardShouldPersistTaps="always"
         renderItem={({ item }) => (
           <ContactListItem contact={item} navigate={navigate} />
@@ -58,6 +60,11 @@ const ContactList = () => {
       />
     </React.Fragment>
   );
+};
+
+ContactList.navigationOptions = {
+  title: 'Contacts',
+  headerRight: <SignoutButton />,
 };
 
 export default ContactList;

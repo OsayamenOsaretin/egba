@@ -1,6 +1,12 @@
 import React from 'react';
 import { AsyncStorage } from 'react-native';
-import { USER_PHONE, USER_FIRST_NAME, USER_BANK, ONBOARDING_STATUS } from 'constants';
+import {
+  USER_PHONE,
+  USER_FIRST_NAME,
+  USER_BANK,
+  ONBOARDING_STATUS,
+  USER_CONTEXT,
+} from 'constants';
 
 const userContext = {
   phoneNumber: '',
@@ -42,7 +48,14 @@ const userContext = {
     const status = await AsyncStorage.getItem(ONBOARDING_STATUS);
     userContext.onBoardingStatus = status;
     return status;
-  }
+  },
+  clearUserContext: async () => {
+    const clearedObjects = USER_CONTEXT.map(
+      async obj => await AsyncStorage.removeItem(obj),
+    );
+    await Promise.all(clearedObjects);
+    return 'success';
+  },
 };
 
 const UserContext = React.createContext(userContext);

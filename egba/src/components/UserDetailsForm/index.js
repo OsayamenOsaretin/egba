@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import AmountTextInput from 'components/AmountTextInput';
+import BankSelectMenu from 'components/BankSelectMenu';
+
 import {
   TextInput,
 } from 'react-native-paper';
@@ -13,14 +14,14 @@ const UserDetailsForm = ({ values, handleChange, children }) => (
       <TextInput onChangeText={handleChange('name')} value={values.name} label="Account Name" />
     </View>
     <View style={styles.inputContainer}>
-      <TextInput onChangeText={handleChange('bank')} value={values.bank} label="Bank" />
-    </View>
-    <View style={styles.inputContainer}>
       <TextInput
         label="Account Number"
         onChangeText={handleChange('accountNumber')}
         value={values.accountNumber}
       />
+    </View>
+    <View style={styles.inputContainer}>
+      <BankSelectMenu handleChange={handleChange('bank')} value={values.bank} />
     </View>
     {children}
   </View>

@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { List } from "react-native-paper";
 
 const ContactListItem = ({ contact, handlePress }) => (
-  <TouchableOpacity onPress={handlePress}>
+  <TouchableOpacity onPress={() => handlePress(contact)}>
     <List.Item
       title={contact.name}
       left={() => <List.Icon icon="account-circle" />}

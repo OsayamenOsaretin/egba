@@ -25,3 +25,4 @@ export const USER_CONTEXT = [
 
 export const REGISTER_URL = `${BASE_URL}/client/signup`;
 export const USER_DETAILS_URL = `${BASE_URL}/client/bank-details/`;
+export const BANKS_URL = `${BASE_URL}/bank?status=active`;

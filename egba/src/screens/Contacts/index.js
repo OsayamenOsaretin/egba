@@ -33,7 +33,7 @@ const ContactList = ({ theme }) => {
   const { navigate } = useNavigation();
   const themeStyles = styles(theme);
 
-  const handlePress = () => navigate(SCREENS.PAY, { account: contact });
+  const handlePress = (contact) => navigate(SCREENS.PAY, { account: contact });
 
   useEffect(() => {
     getContacts(setContacts, contactSearch);

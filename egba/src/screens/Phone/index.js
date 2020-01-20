@@ -3,17 +3,21 @@ import { KeyboardAvoidingView, View } from 'react-native';
 import {
   Button,
   TextInput,
+  withTheme,
 } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import UserContext from 'shared/contexts/user';
+import styles from './styles';
 
 import { SCREENS } from 'constants';
 import { useNavigation } from 'react-navigation-hooks';
 
-const Phone = () => {
+const Phone = ({ theme }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const userContext = useContext(UserContext);
   const { navigate } = useNavigation();
+
+  const phoneStyles = styles(theme);
 
   const handleNextButtonPress = () => {
     userContext.setPhoneNumber(phoneNumber);
@@ -25,7 +29,7 @@ const Phone = () => {
   };
 
   return (
-    <KeyboardAvoidingView>
+    <KeyboardAvoidingView style={phoneStyles.container}>
       <View>
         <TextInput
           label="Phone Number"
@@ -47,4 +51,4 @@ const Phone = () => {
   );
 };
 
-export default Phone;
+export default withTheme(Phone);

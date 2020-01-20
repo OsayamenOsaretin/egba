@@ -12,9 +12,9 @@ import { SCREENS } from 'constants';
 import UserDetailsForm from 'components/UserDetailsForm';
 
 const ConfirmDetails = () => {
-  const phoneNumber = useNavigationParam('phoneNumber');
+  // const phoneNumber = useNavigationParam('phoneNumber');
 
-  // const phoneNumber = '2347061565279';
+  const phoneNumber = '2347061565279';
   
   const [userAccount, userAccountLoading] = useGetAccountDetails(phoneNumber);
   const { registerUser } = useRegister();
@@ -44,13 +44,13 @@ const ConfirmDetails = () => {
   }
 
   let initialValues = {
-    bank: '',
+    bank: null,
     accountNumber: '',
   };
 
   if (userAccount && userAccount.length > 0) {
-    const [{ account_number: accountNumber, label, account_name: name }] = userAccount;
-    initialValues = { bank: label, accountNumber, name };
+    const [{ account_number: accountNumber, code, account_name: name }] = userAccount;
+    initialValues = { bank: code, accountNumber, name };
   }
 
     const FormButton = ({ handleSubmit }) => (

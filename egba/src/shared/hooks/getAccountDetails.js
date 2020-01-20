@@ -27,6 +27,7 @@ const useGetAccountDetails = (number) => {
 
   useEffect(() => {
     fetchUserAccountData();
+    // return () => fetchUserAccountData;
   }, [number]);
 
   return [userAccount, loading];

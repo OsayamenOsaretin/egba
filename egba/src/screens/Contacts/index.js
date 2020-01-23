@@ -37,7 +37,7 @@ const ContactList = ({ theme }) => {
 
         if (data.length > 0) {
           if (!isUnmounted) {
-            setContacts(data);
+            setContacts(data.filter(contact => contact.phoneNumbers));
           }
         }
       }

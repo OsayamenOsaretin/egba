@@ -12,7 +12,6 @@ const useRegisteration = () => {
     } catch (error) {
       console.log(error, 'User registeration details');
     }
-    setLoading(false);
   }
 
   return { registerUser };

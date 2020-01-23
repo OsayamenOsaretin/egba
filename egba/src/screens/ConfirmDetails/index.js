@@ -32,7 +32,6 @@ const ConfirmDetails = () => {
     });
 
     if (userData) {
-      console.log('the value of userData', userData);
       userContext.setBank(bank);
       userContext.setOnboardingStatus('done');
       navigate(SCREENS.AUTH_LOADING);

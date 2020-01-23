@@ -5,27 +5,13 @@ import { Searchbar, withTheme } from "react-native-paper";
 import { useNavigation } from "react-navigation-hooks";
 
 import * as Contacts from "expo-contacts";
+
 import { SCREENS } from "../../../src/constants";
+import { useCheckContactPermission } from 'shared/hooks/permissions';
 import SignoutButton from 'components/SignoutButton';
 import ContactListItem from 'components/ContactListItem';
 
 import styles from './styles';
-
-
-const getContacts = async (setContacts, search) => {
-  const query = {
-    sort: Contacts.SortTypes.FirstName,
-  }
-  if (search) {
-    query.name = search;
-  }
-  const { data } = await Contacts.getContactsAsync(query);
-
-  if (data.length > 0) {
-    setContacts(data);
-  }
-};
-
 
 const ContactList = ({ theme }) => {
   const [contacts, setContacts] = useState([]);
@@ -33,12 +19,33 @@ const ContactList = ({ theme }) => {
   const { navigate } = useNavigation();
   const themeStyles = styles(theme);
 
+  const [contactsPermissions] = useCheckContactPermission();
+
   const handlePress = (contact) => navigate(SCREENS.PAY, { account: contact });
 
   useEffect(() => {
-    getContacts(setContacts, contactSearch);
+    let isUnmounted = false;
+    async function getContacts()  {
+      const query = {
+        sort: Contacts.SortTypes.FirstName,
+      }
+      if (contactSearch) {
+        query.name = contactSearch;
+      }
+      if (contactsPermissions) {
+        const { data } = await Contacts.getContactsAsync(query);
 
-  }, [contactSearch]);
+        if (data.length > 0) {
+          if (!isUnmounted) {
+            setContacts(data);
+          }
+        }
+      }
+    };
+
+    getContacts();
+    return () => { isUnmounted = true; }
+  }, [contactSearch, contactsPermissions]);
 
   return (
     <View>

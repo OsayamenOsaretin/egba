@@ -10,6 +10,7 @@ export const SCREENS = {
   PAY: 'Pay',
   PHONE: 'Phone',
   CONFIRM_DETAILS: 'Confirm Details',
+  CONTACT_PERMISSIONS: 'Contact Permissions',
 };
 
 export const USER_PHONE = 'User Phone';

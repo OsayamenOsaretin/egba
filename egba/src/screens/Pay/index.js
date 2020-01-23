@@ -1,9 +1,6 @@
 import React from 'react';
-import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
-import {
-  ActivityIndicator,
-} from 'react-native-paper';
-// import TestInputMask from "react-native-text-input-mask";
+import { Platform, KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import { ActivityIndicator, withTheme } from 'react-native-paper';
 import { Formik } from 'formik';
 
 import { useNavigationParam } from 'react-navigation-hooks';
@@ -14,28 +11,11 @@ import UserDetailsForm from 'components/UserDetailsForm';
 import PayButton from 'components/Button';
 import useGetAccountDetails from 'shared/hooks/getAccountDetails';
 
-import styles from './styles';
+import screenStyles from './styles';
 
-const Pay = () => {
+const Pay = ({ theme }) => {
   const account = useNavigationParam('account');
-  return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <ScrollView>
-        <AccountInfo account={account} />
-        <PaymentForm account={account} />
-      </ScrollView>
-    </KeyboardAvoidingView>
-  );
-};
-
-const PaymentForm = ({ account }) => {
-  const { phoneNumbers: [ { number } ] } = account;
-  const [accountDetails, loadingAccountDetails] = useGetAccountDetails(number);
-
-  if (loadingAccountDetails) {
-    return <ActivityIndicator />;
-  }
-
+  const styles = screenStyles(theme);
   const handleSubmit = values => {
     // handle submitting request for to send money
 
@@ -43,6 +23,30 @@ const PaymentForm = ({ account }) => {
     console.log('the values', values);
     // dummy pay account number
   };
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding"
+      keyboardVerticalOffset={Platform.select({ ios: 95, android: 500 })}
+    >
+      <ScrollView>
+        <AccountInfo account={account} />
+        <PaymentForm account={account} theme={theme} />
+      </ScrollView>
+      <PayButton handleSubmit={handleSubmit} label="Send" />
+    </KeyboardAvoidingView>
+  );
+};
+
+const PaymentForm = ({ account }) => {
+  const {
+    phoneNumbers: [{ number }],
+  } = account;
+  const [accountDetails, loadingAccountDetails] = useGetAccountDetails(number);
+
+  if (loadingAccountDetails) {
+    return <ActivityIndicator />;
+  }
 
   let initialState = {
     bank: '',
@@ -56,17 +60,17 @@ const PaymentForm = ({ account }) => {
   }
 
   return (
-    <Formik onSubmit={handleSubmit} initialValues={initialState}>
+    <Formik initialValues={initialState}>
       {props => (
         <UserDetailsForm {...props}>
-          <View style={styles.inputContainer}>
-            <AmountTextInput values={props.values} handleChange={props.handleChange} />
-          </View>
-          <PayButton handleSubmit={props.onSubmit} label="Send" />
+          <AmountTextInput
+            value={props.values.amount}
+            handleChange={props.handleChange('amount')}
+          />
         </UserDetailsForm>
       )}
     </Formik>
   );
 };
 
-export default Pay;
+export default withTheme(Pay);

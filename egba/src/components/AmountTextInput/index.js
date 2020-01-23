@@ -1,11 +1,11 @@
 import React from 'react';
-import { TextInput } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 
-const AmountTextInput = ({ values, handleChange }) => (
+const AmountTextInput = ({ value, handleChange }) => (
   <TextInput
-    value={values.amount}
-    onChangeText={handleChange('amount')}
+    value={value}
+    onChangeText={handleChange}
     label="How much?"
     render={props => (
       <TextInputMask

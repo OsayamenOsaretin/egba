@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-const styles = (theme) =>
+const styles = theme =>
   StyleSheet.create({
     container: {
       backgroundColor: theme.colors.background,
@@ -8,13 +8,13 @@ const styles = (theme) =>
       justifyContent: 'space-between',
       marginBottom: 36,
       padding: 10,
-      paddingTop: 100,
+      paddingTop: 55,
+    },
+    formContainer: {
+      flex: 5,
     },
     button: {
       padding: 10,
-    },
-    headline: {
-      marginBottom: 20,
     },
   });
 

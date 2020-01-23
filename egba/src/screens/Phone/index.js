@@ -1,13 +1,14 @@
 import React, { useState, useContext } from 'react';
-import { KeyboardAvoidingView, View } from 'react-native';
+import { KeyboardAvoidingView, View, Platform } from 'react-native';
 import {
   Button,
   TextInput,
   withTheme,
+  Headline,
 } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import UserContext from 'shared/contexts/user';
-import styles from './styles';
+import screenStyles from './styles';
 
 import { SCREENS } from 'constants';
 import { useNavigation } from 'react-navigation-hooks';
@@ -17,7 +18,7 @@ const Phone = ({ theme }) => {
   const userContext = useContext(UserContext);
   const { navigate } = useNavigation();
 
-  const phoneStyles = styles(theme);
+  const styles = screenStyles(theme);
 
   const handleNextButtonPress = () => {
     userContext.setPhoneNumber(phoneNumber);
@@ -29,8 +30,13 @@ const Phone = ({ theme }) => {
   };
 
   return (
-    <KeyboardAvoidingView style={phoneStyles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={(Platform.OS === 'ios') ? "padding": null}
+      keyboardVerticalOffset={Platform.select({ ios: 95, android: 500 })}
+    >
       <View>
+        <Headline style={styles.headline}>Welcome to Bowo</Headline>
         <TextInput
           label="Phone Number"
           onChangeText={handlePhoneNumberChange}
@@ -38,14 +44,19 @@ const Phone = ({ theme }) => {
           render={props => (
             <TextInputMask
               {...props}
-              type='cel-phone'
+              type="cel-phone"
               mask="+[00] [000] [000] [000]"
             />
           )}
         />
       </View>
-      <Button mode="contained" dark={true} onPress={handleNextButtonPress}>
-        Next
+      <Button
+        style={styles.button}
+        mode="contained"
+        dark={true}
+        onPress={handleNextButtonPress}
+      >
+        Register
       </Button>
     </KeyboardAvoidingView>
   );

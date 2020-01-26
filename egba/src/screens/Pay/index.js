@@ -17,40 +17,11 @@ import screenStyles from './styles';
 const Pay = ({ theme }) => {
   const account = useNavigationParam('account');
   const styles = screenStyles(theme);
+  const [accountDetails, loadingAccountDetails] = useGetAccountDetails(number);
 
-  const handleSubmit = values => {
-    const { accountNumber, label, amount, bank } = values;
-    console.log('the values', values);
-    makePayment({
-      receiverDetails: {
-        accountNumber,
-      },
-      senderDetails: {
-        bank: 891,
-      },
-      amount,
-    })
-  };
-  return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
-      keyboardVerticalOffset={Platform.select({ ios: 95, android: 500 })}
-    >
-      <ScrollView>
-        <AccountInfo account={account} />
-        <PaymentForm account={account} theme={theme} />
-      </ScrollView>
-      <PayButton handleSubmit={handleSubmit} label="Send" />
-    </KeyboardAvoidingView>
-  );
-};
-
-const PaymentForm = ({ account }) => {
   const {
     phoneNumbers: [{ number }],
   } = account;
-  const [accountDetails, loadingAccountDetails] = useGetAccountDetails(number);
 
   if (loadingAccountDetails) {
     return <ActivityIndicator />;
@@ -67,17 +38,49 @@ const PaymentForm = ({ account }) => {
     initialState = { bank: label, accountNumber, label };
   }
 
+  const handleSubmit = values => {
+    const { accountNumber, label, amount, bank } = values;
+    console.log('the values', values);
+    makePayment({
+      receiverDetails: {
+        accountNumber,
+      },
+      senderDetails: {
+        bank: {
+          code: 891,
+        },
+      },
+      amount,
+    });
+  };
+
   return (
-    <Formik initialValues={initialState}>
+    <Formik initialValues={initialState} onSubmit={handleSubmit}>
       {props => (
-        <UserDetailsForm {...props}>
-          <AmountTextInput
-            value={props.values.amount}
-            handleChange={props.handleChange('amount')}
-          />
-        </UserDetailsForm>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior="padding"
+          keyboardVerticalOffset={Platform.select({ ios: 95, android: 500 })}
+        >
+          <ScrollView>
+            <AccountInfo account={account} />
+            <PaymentForm {...props} />
+          </ScrollView>
+          <PayButton handleSubmit={props.handleSubmit} label="Send" />
+        </KeyboardAvoidingView>
       )}
     </Formik>
+  );
+};
+
+const PaymentForm = (props) => {
+  return (
+    <UserDetailsForm {...props}>
+      <AmountTextInput
+        value={props.values.amount}
+        handleChange={props.handleChange('amount')}
+      />
+    </UserDetailsForm>
   );
 };
 

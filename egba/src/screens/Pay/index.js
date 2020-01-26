@@ -10,18 +10,26 @@ import AccountInfo from 'components/AccountInfo';
 import UserDetailsForm from 'components/UserDetailsForm';
 import PayButton from 'components/Button';
 import useGetAccountDetails from 'shared/hooks/getAccountDetails';
+import makePayment from 'shared/utils/makePayment';
 
 import screenStyles from './styles';
 
 const Pay = ({ theme }) => {
   const account = useNavigationParam('account');
   const styles = screenStyles(theme);
-  const handleSubmit = values => {
-    // handle submitting request for to send money
 
+  const handleSubmit = values => {
     const { accountNumber, label, amount, bank } = values;
     console.log('the values', values);
-    // dummy pay account number
+    makePayment({
+      receiverDetails: {
+        accountNumber,
+      },
+      senderDetails: {
+        bank: 891,
+      },
+      amount,
+    })
   };
   return (
     <KeyboardAvoidingView

@@ -32,6 +32,7 @@ const UserDetailsForm = ({ values, handleChange, children, errors }) => (
     <View style={styles.inputContainer}>
       <TextInput
         label="Account Number"
+        keyboardType="numeric"
         onChangeText={handleChange('accountNumber')}
         value={values.accountNumber}
       />

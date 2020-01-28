@@ -2,7 +2,7 @@ import React from 'react';
 import { TextInput } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 
-const AmountTextInput = ({ value, handleChange }) => {
+const AmountTextInput = ({ value, handleChange, ref }) => {
   let RawTextInput;
   return (
     <TextInput
@@ -14,6 +14,7 @@ const AmountTextInput = ({ value, handleChange }) => {
           {...props}
           type="money"
           ref={elem => (RawTextInput = elem)}
+          ref={ref}
           options={{
             precision: 0,
             delimiter: ',',

@@ -49,7 +49,6 @@ const Pay = ({ theme }) => {
 
   const handleSubmit = values => {
     const { accountNumber, label, amount, bank } = values;
-    console.log('the values', values);
     makePayment({
       receiverDetails: {
         accountNumber,
@@ -92,7 +91,7 @@ const PaymentForm = (props) => {
       <AmountTextInput
         value={props.values.amount}
         handleChange={props.handleChange('amount')}
-        ref={props.AmountRef}
+        amountRef={props.amountRef}
       />
       <HelperText visible={!!props.errors.amount}>
           {props.errors.amount}

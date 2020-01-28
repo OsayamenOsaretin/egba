@@ -1,18 +1,24 @@
 import React from 'react';
 import { Platform, KeyboardAvoidingView, ScrollView, View } from 'react-native';
-import { ActivityIndicator, withTheme } from 'react-native-paper';
+import { ActivityIndicator, withTheme, HelperText } from 'react-native-paper';
 import { Formik } from 'formik';
 
 import { useNavigationParam } from 'react-navigation-hooks';
 
 import AmountTextInput from 'components/AmountTextInput';
 import AccountInfo from 'components/AccountInfo';
-import UserDetailsForm from 'components/UserDetailsForm';
+import UserDetailsForm, { UserDetailsSchema } from 'components/UserDetailsForm';
 import PayButton from 'components/Button';
 import useGetAccountDetails from 'shared/hooks/getAccountDetails';
 import makePayment from 'shared/utils/makePayment';
+import * as Yup from 'yup';
 
 import screenStyles from './styles';
+
+const PaymentFormSchema = Yup.object().shape({
+  ...UserDetailsSchema,
+  amount: Yup.string().required('Please enter the amount you want to send'),
+});
 
 const Pay = ({ theme }) => {
   const account = useNavigationParam('account');
@@ -38,6 +44,9 @@ const Pay = ({ theme }) => {
     initialState = { bank: label, accountNumber, label };
   }
 
+  let RawTextInput;
+  const AmountRef = elem => (RawTextInput = elem);
+
   const handleSubmit = values => {
     const { accountNumber, label, amount, bank } = values;
     console.log('the values', values);
@@ -50,12 +59,16 @@ const Pay = ({ theme }) => {
           code: 891,
         },
       },
-      amount,
+      amount: RawTextInput.getRawValue(),
     });
   };
 
   return (
-    <Formik initialValues={initialState} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={initialState}
+      onSubmit={handleSubmit}
+      validationSchema={PaymentFormSchema}
+    >
       {props => (
         <KeyboardAvoidingView
           style={styles.container}
@@ -64,7 +77,7 @@ const Pay = ({ theme }) => {
         >
           <ScrollView>
             <AccountInfo account={account} />
-            <PaymentForm {...props} />
+            <PaymentForm {...props} amountRef={AmountRef} />
           </ScrollView>
           <PayButton handleSubmit={props.handleSubmit} label="Send" />
         </KeyboardAvoidingView>
@@ -79,7 +92,11 @@ const PaymentForm = (props) => {
       <AmountTextInput
         value={props.values.amount}
         handleChange={props.handleChange('amount')}
+        ref={props.AmountRef}
       />
+      <HelperText visible={!!props.errors.amount}>
+          {props.errors.amount}
+      </HelperText>
     </UserDetailsForm>
   );
 };

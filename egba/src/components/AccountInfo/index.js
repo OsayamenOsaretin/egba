@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Avatar, Text } from 'react-native-paper';
+import { Avatar, Title } from 'react-native-paper';
 
 import styles from './styles';
 
@@ -14,9 +14,8 @@ const AccountInfo = ({ account }) => {
 
   return (
     <View style={styles.accountInfo}>
-      <AccountAvatar icon="account-circle" size={134} />
       <View style={styles.accountName}>
-        <Text>{name}</Text>
+        <Title>{name}</Title>
       </View>
     </View>
   );

@@ -2,8 +2,9 @@ import React from 'react';
 import { Platform, KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import { ActivityIndicator, withTheme, HelperText } from 'react-native-paper';
 import { Formik } from 'formik';
+import { SCREENS } from 'constants';
 
-import { useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 import AmountTextInput from 'components/AmountTextInput';
 import AccountInfo from 'components/AccountInfo';
@@ -11,6 +12,7 @@ import UserDetailsForm, { UserDetailsSchema } from 'components/UserDetailsForm';
 import PayButton from 'components/Button';
 import useGetAccountDetails from 'shared/hooks/getAccountDetails';
 import makePayment from 'shared/utils/makePayment';
+import useRegister from 'shared/hooks/register';
 import * as Yup from 'yup';
 
 import screenStyles from './styles';
@@ -24,6 +26,8 @@ const Pay = ({ theme }) => {
   const account = useNavigationParam('account');
   const styles = screenStyles(theme);
   const [accountDetails, loadingAccountDetails] = useGetAccountDetails(number);
+  const { navigate } = useNavigation();
+  const { registerUser } = useRegister();
 
   const {
     phoneNumbers: [{ number }],
@@ -47,8 +51,9 @@ const Pay = ({ theme }) => {
   let RawTextInput;
   const AmountRef = elem => (RawTextInput = elem);
 
-  const handleSubmit = values => {
-    const { accountNumber, label, amount, bank } = values;
+  const handleSubmit = async values => {
+    const { accountNumber, bank, name } = values;
+
     makePayment({
       receiverDetails: {
         accountNumber,
@@ -60,6 +65,14 @@ const Pay = ({ theme }) => {
       },
       amount: RawTextInput.getRawValue(),
     });
+
+    await registerUser({
+      accountNumber,
+      phoneNumber: number,
+      bankCode: bank,
+      accountName: name,
+    });
+    navigate(SCREENS.CONTACTS);
   };
 
   return (
@@ -93,7 +106,7 @@ const PaymentForm = (props) => {
         handleChange={props.handleChange('amount')}
         amountRef={props.amountRef}
       />
-      <HelperText visible={!!props.errors.amount}>
+      <HelperText visible={!!props.errors.amount && !!props.touched.amount}>
           {props.errors.amount}
       </HelperText>
     </UserDetailsForm>

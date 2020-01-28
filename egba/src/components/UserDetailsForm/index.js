@@ -17,7 +17,7 @@ export const UserDetailsSchema = {
   ),
 };
 
-const UserDetailsForm = ({ values, handleChange, children, errors }) => (
+const UserDetailsForm = ({ values, handleChange, children, errors, touched }) => (
   <View style={styles.formContainer}>
     <View style={styles.inputContainer}>
       <TextInput
@@ -25,7 +25,7 @@ const UserDetailsForm = ({ values, handleChange, children, errors }) => (
         value={values.name}
         label="Account Name"
       />
-      <HelperText visible={!!errors.name}>
+      <HelperText visible={!!errors.name && !!touched.name}>
         Name must be at least three characters, eg. bob
       </HelperText>
     </View>
@@ -36,13 +36,13 @@ const UserDetailsForm = ({ values, handleChange, children, errors }) => (
         onChangeText={handleChange('accountNumber')}
         value={values.accountNumber}
       />
-      <HelperText visible={!!errors.accountNumber}>
+      <HelperText visible={!!errors.accountNumber && !!touched.accountNumber}>
           {errors.accountNumber}
       </HelperText>
     </View>
     <View style={styles.inputContainer}>
       <BankSelectMenu handleChange={handleChange('bank')} value={values.bank} />
-      <HelperText visible={!!errors.bank}>
+      <HelperText visible={!!errors.bank && !!touched.bank}>
           {errors.bank}
       </HelperText>
     </View>

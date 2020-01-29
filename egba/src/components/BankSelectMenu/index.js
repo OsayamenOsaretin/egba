@@ -25,7 +25,7 @@ const BankSelectMenu = ({ handleChange, value }) => {
 
   let buttonText = 'Select Bank';
 
-  if (value) {
+  if (value && bankCodeMap) {
     buttonText = bankCodeMap[value].label;
   }
 

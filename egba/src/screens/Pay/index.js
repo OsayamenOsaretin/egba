@@ -24,14 +24,16 @@ const PaymentFormSchema = Yup.object().shape({
 
 const Pay = ({ theme }) => {
   const account = useNavigationParam('account');
+  console.log('the account value', account)
   const styles = screenStyles(theme);
-  const [accountDetails, loadingAccountDetails] = useGetAccountDetails(number);
   const { navigate } = useNavigation();
   const { registerUser } = useRegister();
 
   const {
     phoneNumbers: [{ number }],
   } = account;
+
+  const [accountDetails, loadingAccountDetails] = useGetAccountDetails(number);
 
   if (loadingAccountDetails) {
     return <ActivityIndicator />;
@@ -44,8 +46,11 @@ const Pay = ({ theme }) => {
   };
 
   if (accountDetails && accountDetails.length > 0) {
-    const [{ account_number: accountNumber, label }] = accountDetails;
-    initialState = { bank: label, accountNumber, label };
+    console.log('the account details', accountDetails);
+    const [
+      { account_number: accountNumber, label, code, account_name: name },
+    ] = accountDetails;
+    initialState = { bank: code, accountNumber, label, name };
   }
 
   let RawTextInput;

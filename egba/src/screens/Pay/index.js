@@ -89,7 +89,7 @@ const Pay = ({ theme }) => {
       {props => (
         <KeyboardAvoidingView
           style={styles.container}
-          behavior="padding"
+          behavior={Platform.OS === 'ios' ? "padding": ""}
           keyboardVerticalOffset={Platform.select({ ios: 95, android: 500 })}
         >
           <ScrollView>

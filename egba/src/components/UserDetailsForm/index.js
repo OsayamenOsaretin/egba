@@ -9,7 +9,9 @@ export const UserDetailsSchema = {
   name: Yup.string()
     .min(3, 'Name should be longer than 3 characters')
     .required('Please enter a name for your friend'),
-  bank: Yup.string().required('Click on the button to select a bank'),
+  bank: Yup.string().required(
+    'Click on the button to select a bank',
+  ),
   accountNumber: Yup.number().test(
     'numberLength',
     'Account numbers are 10 digits, please enter the correct account number',

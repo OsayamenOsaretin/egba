@@ -46,7 +46,6 @@ const Pay = ({ theme }) => {
   };
 
   if (accountDetails && accountDetails.length > 0) {
-    console.log('the account details', accountDetails);
     const [
       { account_number: accountNumber, label, code, account_name: name },
     ] = accountDetails;
@@ -89,7 +88,7 @@ const Pay = ({ theme }) => {
       {props => (
         <KeyboardAvoidingView
           style={styles.container}
-          behavior={Platform.OS === 'ios' ? "padding": ""}
+          behavior={Platform.OS === 'ios' ? "padding": null}
           keyboardVerticalOffset={Platform.select({ ios: 95, android: 500 })}
         >
           <ScrollView>

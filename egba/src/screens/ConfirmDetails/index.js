@@ -13,16 +13,18 @@ import useGetAccountDetails from 'shared/hooks/getAccountDetails';
 import useRegister from 'shared/hooks/register';
 import UserContext from 'shared/contexts/user';
 import screenStyles from './styles';
+import * as Yup from 'yup';
 
 import { SCREENS } from 'constants';
 
-import UserDetailsForm from 'components/UserDetailsForm';
+import UserDetailsForm, { UserDetailsSchema } from 'components/UserDetailsForm';
+
+const ConfirmDetailsFormSchema = Yup.object().shape({
+  ...UserDetailsSchema,
+})
 
 const ConfirmDetails = ({ theme }) => {
   const phoneNumber = useNavigationParam('phoneNumber');
-
-  // const phoneNumber = '2347061565279';
-
   const [userAccount, userAccountLoading] = useGetAccountDetails(phoneNumber);
   const { registerUser } = useRegister();
   const { navigate } = useNavigation();
@@ -51,8 +53,9 @@ const ConfirmDetails = ({ theme }) => {
   }
 
   let initialValues = {
-    bank: null,
+    bank: '',
     accountNumber: '',
+    name: ''
   };
 
   if (userAccount && userAccount.length > 0) {
@@ -74,7 +77,11 @@ const ConfirmDetails = ({ theme }) => {
   );
 
   return (
-    <Formik onSubmit={handleConfirmation} initialValues={initialValues}>
+    <Formik
+      onSubmit={handleConfirmation}
+      initialValues={initialValues}
+      validationSchema={ConfirmDetailsFormSchema}
+    >
       {props => (
         <KeyboardAvoidingView
           style={styles.container}
